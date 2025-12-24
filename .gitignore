@@ -1,0 +1,7 @@
+# Vyaas AI - Ignore these files
+__pycache__/
+*.pyc
+.env
+*.log
+node_modules/
+.DS_Store

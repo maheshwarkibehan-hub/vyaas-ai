@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyaas AI</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Highlight.js -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar (Visual only for now, can be expanded) -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="ri-sparkling-fill brand-icon"></i>
+                <span>Vyaas AI</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-item active" id="newChatBtn">
+                    <i class="ri-chat-4-line"></i>
+                    <span>New Chat</span>
+                </button>
+                <div class="nav-divider"></div>
+                <!-- History Container -->
+                <div class="history-label">Recent Chats</div>
+                <div id="historyList" class="nav-menu history-list">
+                    <!-- History items will be injected here -->
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="sidebarUpgradeBtn" class="nav-item special-upgrade">
+                    <i class="ri-sparkling-2-fill"></i>
+                    <span>Upgrade Plan</span>
+                </button>
+                <div class="nav-divider"></div>
+                <button id="deleteAllBtn" class="nav-item">
+                    <i class="ri-delete-bin-2-line"></i>
+                    <span>Delete All Chats</span>
+                </button>
+                <button id="settingsBtn" class="nav-item">
+                    <i class="ri-settings-3-line"></i>
+                    <span>Settings</span>
+                </button>
+                <button id="sidebarLogoutBtn" class="nav-item hidden" style="color: #ef4444;">
+                    <i class="ri-logout-box-line"></i>
+                    <span>Log Out</span>
+                </button>
+            </div>
+            <div class="user-profile">
+                <div class="avatar">U</div>
+                <div class="user-info">
+                    <span class="name">User</span>
+                    <span class="status">Local</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-interface">
+            <header class="chat-header">
+                <div id="wordCountBadge" class="word-count-badge hidden">
+                    <span id="wordCountVal">0</span>/500 words
+                </div>
+                <div class="model-badge">
+                    <span class="indicator"></span>
+                    <select id="modelSelect" class="model-select">
+                        <option value="vyaas:latest" selected>vyaas:latest</option>
+                    </select>
+                    <span id="modelInfoDisplay"
+                        style="font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; margin-left: 0.5rem; font-family: 'JetBrains Mono', monospace;"></span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="ri-moon-line"></i></button>
+                </div>
+            </header>
+
+            <div class="messages-container" id="messagesContainer">
+                <!-- Welcome Message -->
+                <div class="message system-message">
+                    <div class="message-content">
+                        <h2>Welcome to Vyaas AI</h2>
+                        <p>I'm running locally on your machine. How can I help you today?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <div id="imagePreviewContainer" class="image-preview hidden">
+                        <img id="imagePreview" src="" alt="Preview">
+                        <button id="removeImageBtn"><i class="ri-close-line"></i></button>
+                    </div>
+
+                    <!-- Hidden Inputs -->
+                    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                    <input type="file" id="codeInput" accept=".txt,.js,.py,.html,.css,.json,.md,.csv"
+                        style="display: none;">
+
+                    <!-- Plus Menu -->
+                    <div class="plus-menu-container">
+                        <button id="plusBtn" class="icon-btn" style="margin-right: 0.25rem;">
+                            <i class="ri-add-circle-line"></i>
+                        </button>
+                        <div id="uploadMenu" class="upload-menu hidden">
+                            <button class="menu-item" id="menuUploadImage">
+                                <i class="ri-image-add-line"></i> Upload Image
+                            </button>
+                            <button class="menu-item" id="menuUploadCode">
+                                <i class="ri-code-line"></i> Upload Code
+                            </button>
+                            <button class="menu-item" id="menuTakePicture">
+                                <i class="ri-camera-line"></i> Take a Picture
+                            </button>
+                        </div>
+                    </div>
+                    <button id="genBtn" class="icon-btn" style="margin-right: 0.5rem; color: #ec4899;">
+                        <i class="ri-magic-line"></i>
+                    </button>
+                    <textarea id="userInput" placeholder="Message Vyaas..." rows="1"
+                        oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    <button id="micBtn" class="icon-btn" style="margin-right: 0.25rem; color: var(--text-color);">
+                        <i class="ri-mic-line"></i>
+                    </button>
+                    <button id="speakerBtn" class="icon-btn" style="margin-right: 0.5rem; color: var(--text-color);"
+                        title="Read Aloud">
+                        <i class="ri-volume-mute-line"></i>
+                    </button>
+                    <button id="sendBtn" class="send-btn">
+                        <i class="ri-arrow-up-line"></i>
+                    </button>
+                </div>
+                <p class="disclaimer">AI responses are generated locally and may be inaccurate.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="lightbox" class="lightbox hidden">
+        <span id="closeLightbox" class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightboxImg">
+        <a id="downloadLink" class="download-btn-overlay" href="#" download="generated-image.png">
+            <i class="ri-download-line"></i> Download
+        </a>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="lightbox hidden">
+        <div class="camera-container">
+            <span id="closeCamera" class="lightbox-close" style="z-index: 1002;">&times;</span>
+            <div class="video-wrapper">
+                <video id="cameraFeed" autoplay playsinline></video>
+                <canvas id="cameraCanvas" style="display: none;"></canvas>
+            </div>
+            <button id="captureBtn" class="capture-btn">
+                <div class="capture-inner"></div>
+            </button>
+            <p style="color: white; margin-top: 1rem; text-align: center;">Click button to capture</p>
+        </div>
+    </div>
+
+    <!-- Login / Pricing Modal -->
+    <div id="loginModal" class="lightbox hidden">
+        <div class="auth-container pricing-modal">
+            <span id="closeLogin" class="lightbox-close"
+                style="top: 1rem; right: 1rem; font-size: 1.5rem;">&times;</span>
+
+            <div class="pricing-header">
+                <h2>Unlock Limitless Possibilities</h2>
+                <p>Upgrade to Pro for the ultimate AI experience.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="plan-card free">
+                    <h3>Start Smart</h3>
+                    <div class="price">Free</div>
+                    <ul class="features-list">
+                        <li><i class="ri-checkbox-circle-line"></i> Smart Basic Chat</li>
+                        <li><i class="ri-checkbox-circle-line"></i> Standard Speed</li>
+                        <li><i class="ri-checkbox-circle-line"></i> Limited Daily Messages</li>
+                        <li class="disabled"><i class="ri-close-circle-line"></i> No Image Generation</li>
+                    </ul>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="plan-card pro">
+                    <div class="badge">RECOMMENDED</div>
+                    <h3>Pro Plan</h3>
+                    <div class="price">Login to Access</div>
+                    <ul class="features-list">
+                        <li><i class="ri-vip-crown-fill"></i> <strong>Smartest AI Models</strong></li>
+                        <li><i class="ri-infinity-line"></i> <strong>Unlimited Conversations</strong></li>
+                        <li><i class="ri-image-2-line"></i> <strong>Image Generation</strong></li>
+                        <li><i class="ri-file-search-line"></i> <strong>File Analysis & Vision</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="authError" class="error-message"></div>
+
+            <div class="auth-section">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-input" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="auth-btn">Sign In to Upgrade</button>
+                </form>
+
+                <div class="auth-divider">OR</div>
+
+                <button id="googleBtn" class="google-btn">
+                    <i class="ri-google-fill" style="font-size: 1.2rem; color: #DB4437;"></i>
+                    Continue with Google
+                </button>
+
+                <div class="auth-footer">
+                    <p id="toggleAuthText">Don't have an account? <button id="toggleAuthBtn" class="auth-link">Sign
+                            up</button></p>
+                </div>
+            </div>
+
+            <!-- Logged In View -->
+            <div id="userProfileSection" class="auth-section hidden" style="text-align: center;">
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="avatar"
+                        style="width: 64px; height: 64px; font-size: 2rem; margin: 0 auto 1rem auto; background: linear-gradient(135deg, #10b981, #3b82f6);">
+                        <span id="profileAvatarText">U</span>
+                    </div>
+                    <h3 id="profileName" style="color: white; margin-bottom: 0.25rem;">User Name</h3>
+                    <p id="profileEmail" style="color: var(--text-muted); font-size: 0.9rem;">user@example.com</p>
+                </div>
+
+                <div
+                    style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 0.5rem; padding: 1rem; margin-bottom: 2rem;">
+                    <div style="color: #10b981; font-weight: 600; margin-bottom: 0.25rem;"><i
+                            class="ri-vip-crown-fill"></i> Pro Plan Active</div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">You have unlimited access to all features.
+                    </p>
+                </div>
+
+                <button id="logoutBtn" class="auth-btn"
+                    style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); width: 100%;">
+                    <i class="ri-logout-box-line"></i> Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="system-prompts.js"></script>
+    <script src="script.js?v=2.8"></script>
+</body>
+
+</html>
