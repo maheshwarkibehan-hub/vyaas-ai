@@ -56,11 +56,10 @@ let selectedModel = 'vyaas:latest';
 // ============================================================
 // DEPLOYMENT CONFIGURATION
 // ============================================================
-// For LOCAL development: Keep as '' (empty string)
-// For PRODUCTION: Set to your Railway backend URL, e.g.:
-// const API_BASE = 'https://your-app.up.railway.app';
+// For LOCAL development: Set to '' (empty string)
+// For PRODUCTION: Railway backend URL
 // ============================================================
-const API_BASE = ''; // Change this when deploying to Vercel!
+const API_BASE = 'https://web-production-a6de0.up.railway.app';
 
 const CHAT_API_URL = 'http://localhost:11434/api/chat';
 const TAGS_API_URL = 'http://localhost:11434/api/tags';
@@ -1179,7 +1178,7 @@ async function callSarvamAndStream(prompt, images, aiContentDiv, signal, modelTy
         ];
 
         // Call OpenRouter via our backend proxy
-        const response = await fetch('/api/chat/openrouter', {
+        const response = await fetch(API_BASE + '/api/chat/openrouter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1264,7 +1263,7 @@ async function callCoderAndStream(prompt, images, aiContentDiv, signal) {
         ];
 
         // Call OpenRouter via our backend proxy with Qwen3-Coder model
-        const response = await fetch('/api/chat/openrouter-coder', {
+        const response = await fetch(API_BASE + '/api/chat/openrouter-coder', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
