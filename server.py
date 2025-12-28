@@ -95,7 +95,7 @@ def search_web():
     return jsonify({'results': final_results})
 
 # --- Sarvam AI Proxy ---
-SARVAM_API_KEY = "sk_enco2pel_WQcvzCqUKaR7ay5EjVs0OPBM" # <--- REPLACE THIS
+SARVAM_API_KEY = "sk_rjm95eck_TaVtA9JqPmz1sgOouf8ZZdzs"
 
 @app.route('/api/chat/sarvam', methods=['POST'])
 def proxy_sarvam():
@@ -145,7 +145,7 @@ def proxy_sarvam():
         return jsonify({'error': str(e)}), 500
 
 # --- OpenRouter AI Proxy (Vyaas Pro) ---
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_MODEL = "google/gemma-3-27b-it:free"
 
 @app.route('/api/chat/openrouter', methods=['POST'])

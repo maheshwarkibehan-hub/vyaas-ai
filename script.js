@@ -923,9 +923,9 @@ Cite the sources if possible.
     }
     //
 
-    // 2. SARVAM-M/RAPID MODEL (Now uses OpenRouter)
+    // 2. VYAAS RAPID (Uses Sarvam AI)
     if (selectedModel === 'sarvam-2b-v0.5' || selectedModel === 'sarvam-m' || selectedModel.includes('sarvam')) {
-        await callSarvamAndStream(finalPrompt, messageImages, answerDiv, signal, 'rapid');
+        await callRapidSarvam(finalPrompt, messageImages, answerDiv, signal);
         return; // EXIT HERE
     }
 
@@ -1200,6 +1200,89 @@ async function callSarvamAndStream(prompt, images, aiContentDiv, signal, modelTy
                 try {
                     const json = JSON.parse(jsonStr);
                     // Sarvam uses OpenAI-style format
+                    if (json.choices && json.choices[0]?.delta?.content) {
+                        const content = json.choices[0].delta.content;
+                        fullResponse += content;
+
+                        // Update UI with throttled render
+                        throttledRender(aiContentDiv, fullResponse);
+                        smartScroll();
+                    }
+                } catch (e) { /* Skip invalid JSON */ }
+            }
+        }
+
+        finalizeMessage(fullResponse);
+
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            aiContentDiv.innerHTML += ' <span style="color: #ef4444; font-size: 0.8rem;">(Stopped)</span>';
+        } else {
+            console.error("[Vyaas Error Log]:", error);
+            aiContentDiv.innerHTML = `<div style="color: #fbbf24; background: rgba(251,191,36,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                <strong>⚠️ Vyaas AI is busy</strong><br>
+                <span style="font-size: 0.9rem;">Please try again in a moment.</span>
+            </div>`;
+        }
+    } finally {
+        setGeneratingState(false);
+    }
+}
+
+// --- SARVAM AI HANDLER FOR VYAAS RAPID ---
+async function callRapidSarvam(prompt, images, aiContentDiv, signal) {
+    aiContentDiv.innerHTML = '';
+    let fullResponse = "";
+
+    try {
+        // Get system prompt for Vyaas Rapid
+        let systemPromptContent = getSystemPrompt('rapid');
+
+        // Build messages array
+        const messages = [
+            { role: 'system', content: systemPromptContent },
+            { role: 'user', content: prompt }
+        ];
+
+        // Call Sarvam via our backend proxy
+        const response = await fetch(API_BASE + '/api/chat/sarvam', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'sarvam-m',
+                messages: messages,
+                stream: true
+            }),
+            signal: signal
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            const errorMsg = errData?.error || errData?.message || 'Sarvam API Error';
+            throw new Error(errorMsg);
+        }
+
+        // Stream Parser (Sarvam uses OpenAI-style SSE format)
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+                if (!line.trim() || line.startsWith('data: [DONE]')) continue;
+
+                let jsonStr = line;
+                if (line.startsWith('data: ')) {
+                    jsonStr = line.slice(6);
+                }
+
+                try {
+                    const json = JSON.parse(jsonStr);
                     if (json.choices && json.choices[0]?.delta?.content) {
                         const content = json.choices[0].delta.content;
                         fullResponse += content;
