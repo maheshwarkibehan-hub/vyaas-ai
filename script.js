@@ -791,7 +791,8 @@ async function sendMessage() {
         } else {
             // NORMAL GEN MODE
             renderMessageToUI(`Generating image: ${prompt}`, 'user');
-            imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1920&height=1080&model=flux&nologo=true`;
+            // Simpler URL format - Pollinations default model works better
+            imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true`;
         }
 
         // Toggle off mode if it was on
