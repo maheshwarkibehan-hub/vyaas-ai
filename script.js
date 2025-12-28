@@ -333,48 +333,30 @@ lightbox.addEventListener('click', (e) => {
 
 
 async function fetchModels() {
-    try {
-        const response = await fetch(TAGS_API_URL);
-        if (!response.ok) throw new Error('Failed to fetch models');
+    // All models are now cloud-based (OpenRouter) - no local Ollama needed
+    modelSelect.innerHTML = '';
 
-        const data = await response.json();
-        const models = data.models || [];
+    // VYAAS 2.0 PRO (OpenRouter - Gemma 27B)
+    const geminiOption = document.createElement('option');
+    geminiOption.value = 'gemini';
+    geminiOption.text = '✨ Vyaas 2.0 Pro';
+    modelSelect.appendChild(geminiOption);
 
-        modelSelect.innerHTML = '';
+    // VYAAS RAPID (OpenRouter - Fast responses)
+    const rapidOption = document.createElement('option');
+    rapidOption.value = 'sarvam-m';
+    rapidOption.text = '🚀 Vyaas Rapid';
+    modelSelect.appendChild(rapidOption);
 
-        // ALWAYS ADD GEMINI (Rebranded)
-        const geminiOption = document.createElement('option');
-        geminiOption.value = 'gemini';
-        geminiOption.text = '✨ Vyaas 2.0 Pro (Cloud)';
-        modelSelect.appendChild(geminiOption);
+    // VYAAS CODER (OpenRouter - Qwen3-Coder)
+    const coderOption = document.createElement('option');
+    coderOption.value = 'vyaas-coder';
+    coderOption.text = '💻 Vyaas Coder';
+    modelSelect.appendChild(coderOption);
 
-        // ALWAYS ADD SARVAM (Static) - Now uses OpenRouter
-        const sarvamOption = document.createElement('option');
-        sarvamOption.value = 'sarvam-m';
-        sarvamOption.text = '🚀 Vyaas Rapid';
-        modelSelect.appendChild(sarvamOption);
-
-        // ALWAYS ADD VYAAS CODER (OpenRouter with Qwen3-Coder)
-        const coderOption = document.createElement('option');
-        coderOption.value = 'vyaas-coder';
-        coderOption.text = '💻 Vyaas Coder';
-        modelSelect.appendChild(coderOption);
-
-        // Default: Select Pro
-        geminiOption.selected = true;
-        selectedModel = 'gemini';
-
-    } catch (error) {
-        console.error('Error fetching models:', error);
-        // Fallback: Add Pro at least
-        modelSelect.innerHTML = '';
-        const geminiOption = document.createElement('option');
-        geminiOption.value = 'gemini';
-        geminiOption.text = '✨ Vyaas 2.0 Pro';
-        geminiOption.selected = true;
-        modelSelect.appendChild(geminiOption);
-        selectedModel = 'gemini';
-    }
+    // Default: Select Pro
+    geminiOption.selected = true;
+    selectedModel = 'gemini';
 }
 
 
