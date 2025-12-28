@@ -354,6 +354,12 @@ async function fetchModels() {
     coderOption.text = '💻 Vyaas Coder';
     modelSelect.appendChild(coderOption);
 
+    // VYAAS SECURITY (Cybersecurity Education)
+    const securityOption = document.createElement('option');
+    securityOption.value = 'vyaas-security';
+    securityOption.text = '🛡️ Vyaas Security';
+    modelSelect.appendChild(securityOption);
+
     // Default: Select Pro
     geminiOption.selected = true;
     selectedModel = 'gemini';
@@ -947,6 +953,12 @@ Cite the sources if possible.
         return;
     }
 
+    // 4. VYAAS SECURITY (Cybersecurity Education - uses OpenRouter Pro with security prompt)
+    if (selectedModel === 'vyaas-security' || selectedModel.includes('security')) {
+        await callSarvamAndStream(finalPrompt, messageImages, answerDiv, signal, 'security');
+        return;
+    }
+
     // OLLAMA LOGIC
     let fullResponse = "";
 
@@ -1178,7 +1190,8 @@ async function callSarvamAndStream(prompt, images, aiContentDiv, signal, modelTy
             body: JSON.stringify({
                 model: 'google/gemma-3-27b-it:free',
                 messages: messages,
-                stream: true
+                stream: true,
+                max_tokens: 8192  // Request maximum tokens for longer responses
             }),
             signal: signal
         });
@@ -1346,7 +1359,8 @@ async function callCoderAndStream(prompt, images, aiContentDiv, signal) {
             body: JSON.stringify({
                 model: 'qwen/qwen3-coder:free',
                 messages: messages,
-                stream: true
+                stream: true,
+                max_tokens: 8192  // Request maximum tokens for long code responses
             }),
             signal: signal
         });
