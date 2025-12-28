@@ -954,13 +954,11 @@ Cite the sources if possible.
         await callCoderAndStream(finalPrompt, messageImages, answerDiv, signal);
         return;
     }
-
-    // 4. VYAAS SECURITY (Cybersecurity Education - uses OpenRouter Pro with security prompt)
-    if (selectedModel === 'vyaas-security' || selectedModel.includes('security')) {
+    // 4. VYAAS SECURITY (Now powered by Venice: Uncensored)
+    if (selectedModel === 'vyaas-security') {
         await callSarvamAndStream(finalPrompt, messageImages, answerDiv, signal, 'security');
         return;
     }
-
     // OLLAMA LOGIC
     let fullResponse = "";
 
@@ -1185,12 +1183,19 @@ async function callSarvamAndStream(prompt, images, aiContentDiv, signal, modelTy
             { role: 'user', content: prompt }
         ];
 
+        // Determine Model ID
+        let targetModelId = 'google/gemma-3-27b-it:free'; // Default (Vyaas Pro)
+
+        if (modelType === 'security') {
+            targetModelId = 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free';
+        }
+
         // Call OpenRouter via our backend proxy
         const response = await fetch(API_BASE + '/api/chat/openrouter', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                model: 'google/gemma-3-27b-it:free',
+                model: targetModelId,
                 messages: messages,
                 stream: true,
                 max_tokens: 8192  // Request maximum tokens for longer responses

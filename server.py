@@ -159,9 +159,15 @@ def proxy_openrouter():
 
     openrouter_url = "https://openrouter.ai/api/v1/chat/completions"
     
-    # Use the payload from frontend, but force our model
+    # Use the payload from frontend, but allow overriding the model if provided
     payload = data
-    payload["model"] = OPENROUTER_MODEL
+    # Default to Gemma if not provided or if it's the specific hardcoded "gemini" case from before
+    # But now we want to trust the frontend's specific model choice for Security/Pro
+    target_model = data.get("model") 
+    if not target_model or target_model == "gemini":
+        target_model = OPENROUTER_MODEL
+        
+    payload["model"] = target_model
     
     try:
         resp = requests.post(
