@@ -1788,6 +1788,13 @@ async function decideIntent(query, model) {
         return { action: 'DIRECT' };
     }
 
+    // SKIP WEB SEARCH FOR CODE UPLOADS
+    // If message contains code blocks (triple backticks) or file attachments, 
+    // it's a code-related request - don't search the web
+    if (query.includes('\`\`\`') || query.includes('📎 **File:')) {
+        return { action: 'DIRECT' };
+    }
+
     // HARDCODED TRIGGERS (Force Search for specific keywords)
     // These keywords will ALWAYS trigger a web search
     const searchKeywords = [
