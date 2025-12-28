@@ -95,8 +95,8 @@ def search_web():
     return jsonify({'results': final_results})
 
 # --- Sarvam AI Proxy ---
-# Read from environment variable, fallback to hardcoded
-SARVAM_API_KEY = os.environ.get('SARVAM_API_KEY', 'sk_rjm95eck_TaVtA9JqPmz1sgOouf8ZZdzs')
+# Read from environment variable, fallback to hardcoded (strip to remove newlines)
+SARVAM_API_KEY = os.environ.get('SARVAM_API_KEY', 'sk_rjm95eck_TaVtA9JqPmz1sgOouf8ZZdzs').strip()
 
 @app.route('/api/chat/sarvam', methods=['POST'])
 def proxy_sarvam():
@@ -146,8 +146,8 @@ def proxy_sarvam():
         return jsonify({'error': str(e)}), 500
 
 # --- OpenRouter AI Proxy (Vyaas Pro) ---
-# Read from environment variable, fallback to hardcoded
-OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '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')
+# Read from environment variable, fallback to hardcoded (strip to remove newlines)
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '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').strip()
 OPENROUTER_MODEL = "google/gemma-3-27b-it:free"
 
 @app.route('/api/chat/openrouter', methods=['POST'])
