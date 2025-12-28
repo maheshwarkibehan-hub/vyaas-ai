@@ -1246,9 +1246,12 @@ async function callSarvamAndStream(prompt, images, aiContentDiv, signal, modelTy
             aiContentDiv.innerHTML += ' <span style="color: #ef4444; font-size: 0.8rem;">(Stopped)</span>';
         } else {
             console.error("[Vyaas Error Log]:", error);
+            const errorMsg = error.message || 'Unknown error';
+            const isRateLimit = errorMsg.includes('500') || errorMsg.includes('rate') || errorMsg.includes('retry');
+
             aiContentDiv.innerHTML = `<div style="color: #fbbf24; background: rgba(251,191,36,0.1); padding: 15px; border-radius: 8px; text-align: center;">
-                <strong>⚠️ Vyaas AI is busy</strong><br>
-                <span style="font-size: 0.9rem;">Please try again in a moment.</span>
+                <strong>⚠️ ${isRateLimit ? 'Rate Limited' : 'Vyaas AI is busy'}</strong><br>
+                <span style="font-size: 0.9rem;">${isRateLimit ? 'OpenRouter free tier limit reached. Wait 1-2 minutes and try again.' : 'Please try again in a moment.'}</span>
             </div>`;
         }
     } finally {
@@ -1409,9 +1412,13 @@ async function callCoderAndStream(prompt, images, aiContentDiv, signal) {
             aiContentDiv.innerHTML += ' <span style="color: #ef4444; font-size: 0.8rem;">(Stopped)</span>';
         } else {
             console.error("[Vyaas Error Log]:", error);
+            // Show more helpful error message
+            const errorMsg = error.message || 'Unknown error';
+            const isRateLimit = errorMsg.includes('500') || errorMsg.includes('rate') || errorMsg.includes('retry');
+
             aiContentDiv.innerHTML = `<div style="color: #fbbf24; background: rgba(251,191,36,0.1); padding: 15px; border-radius: 8px; text-align: center;">
-                <strong>⚠️ Vyaas AI is busy</strong><br>
-                <span style="font-size: 0.9rem;">Please try again in a moment.</span>
+                <strong>⚠️ ${isRateLimit ? 'Rate Limited' : 'Vyaas AI is busy'}</strong><br>
+                <span style="font-size: 0.9rem;">${isRateLimit ? 'OpenRouter free tier limit reached. Wait 1-2 minutes and try again.' : 'Please try again in a moment.'}</span>
             </div>`;
         }
     } finally {
