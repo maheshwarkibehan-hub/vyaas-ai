@@ -729,7 +729,9 @@ function renderMessageToUI(text, sender, isStreaming = false, id = null, images 
     }
 
     if (!isStreaming) {
-        htmlContent += sender === 'user' ? `<p>${text}</p>` : marked.parse(String(text || ""));
+        // Use marked.parse() for BOTH user and AI messages to properly render code blocks
+        // This ensures HTML inside code blocks is escaped and displayed correctly
+        htmlContent += marked.parse(String(text || ""));
     } else {
         htmlContent += text;
     }
