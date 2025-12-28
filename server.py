@@ -174,9 +174,8 @@ def proxy_openrouter():
                 'X-Title': 'Vyaas AI'
             },
             stream=True,
-            timeout=60
+            timeout=180  # 3 minutes for long code responses
         )
-
         if resp.status_code != 200:
             print(f"[ERROR] OpenRouter Error: {resp.text}")
             return jsonify({'error': f"OpenRouter API Error: {resp.text}"}), resp.status_code
@@ -219,9 +218,8 @@ def proxy_openrouter_coder():
                 'X-Title': 'Vyaas AI'
             },
             stream=True,
-            timeout=60
+            timeout=180  # 3 minutes for long code responses
         )
-
         if resp.status_code != 200:
             print(f"[ERROR] OpenRouter Coder Error: {resp.text}")
             return jsonify({'error': f"OpenRouter API Error: {resp.text}"}), resp.status_code
