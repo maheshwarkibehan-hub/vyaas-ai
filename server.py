@@ -145,7 +145,7 @@ def proxy_sarvam():
         return jsonify({'error': str(e)}), 500
 
 # --- OpenRouter AI Proxy (Vyaas Pro) ---
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_MODEL = "google/gemma-3-27b-it:free"
 
 @app.route('/api/chat/openrouter', methods=['POST'])
