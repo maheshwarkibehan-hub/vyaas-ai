@@ -470,11 +470,22 @@ codeInput.addEventListener('change', (e) => {
         reader.onload = (e) => {
             const content = e.target.result;
             const ext = file.name.split('.').pop();
-            const box = `\n\`\`\`${ext}\n${content}\n\`\`\`\n`;
+            const fileName = file.name;
+
+            // For large files, show filename + truncated preview
+            const MAX_LINES = 100; // Limit to first 100 lines
+            const lines = content.split('\n');
+            const truncated = lines.length > MAX_LINES;
+            const displayContent = truncated
+                ? lines.slice(0, MAX_LINES).join('\n') + `\n\n... [${lines.length - MAX_LINES} more lines truncated]`
+                : content;
+
+            // Format: Show filename + code block
+            const box = `\n📎 **File: ${fileName}**\n\`\`\`${ext}\n${displayContent}\n\`\`\`\n`;
 
             userInput.value += box;
             userInput.style.height = 'auto';
-            userInput.style.height = userInput.scrollHeight + 'px';
+            userInput.style.height = Math.min(userInput.scrollHeight, 300) + 'px';
             userInput.focus();
         };
         reader.readAsText(file);
